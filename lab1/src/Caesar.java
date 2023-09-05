@@ -102,7 +102,7 @@ public class Caesar {
                 continue;
 
             if(secret.length + j >= alpha.length)
-                continue;
+                break;
 
             row[secret.length + j] = alpha[i];
             j++;
