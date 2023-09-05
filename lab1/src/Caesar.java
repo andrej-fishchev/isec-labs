@@ -96,15 +96,17 @@ public class Caesar {
 
         System.arraycopy(secret, 0, row, 0, secret.length);
 
-        for(int i = 0, j = 0; i < alpha.length; i++) {
+        for(int i = 0, j = 0, x; i < alpha.length; i++) {
+
+            x = secret.length + j;
+
+            if(x >= alpha.length)
+                break;
 
             if(indexOf(row, alpha[i]) != -1)
                 continue;
 
-            if(secret.length + j >= alpha.length)
-                break;
-
-            row[secret.length + j] = alpha[i];
+            row[x] = alpha[i];
             j++;
         }
 

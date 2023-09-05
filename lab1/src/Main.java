@@ -1,12 +1,15 @@
 public class Main {
 
-    public static final char[] Alphabet = "ABCDEFGHIJKLMNOP".toCharArray();
+    public static final char[] Alphabet = "ABCDEFGHIJKLMNOP"
+            .toCharArray();
 
-    public static final char[] Key = "MY KEY".toCharArray();
+    public static final char[] Key = "MY KEY"
+            .toCharArray();
 
     public static final int Offset = 3;
 
-    public static final char[] Source = "NOPE".toCharArray();
+    public static final char[] Source = "NOPE"
+            .toCharArray();
 
     public static void main(String[] args) {
 
