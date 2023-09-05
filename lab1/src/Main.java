@@ -1,14 +1,16 @@
+
+// var 24
 public class Main {
 
-    public static final char[] Alphabet = "ABCDEFGHIJKLMNOP"
+    public static final char[] Alphabet = ("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" + "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" + " ")
             .toCharArray();
 
-    public static final char[] Key = "MY KEY"
+    public static final char[] Key = "КЛЮЧЕВОЕ СЛоВО"
             .toCharArray();
 
     public static final int Offset = 3;
 
-    public static final char[] Source = "NOPE"
+    public static final char[] Source = "Съешь ещё этих мягких французских булочек"
             .toCharArray();
 
     public static void main(String[] args) {
@@ -25,7 +27,11 @@ public class Main {
                 Offset
         );
 
-        System.out.printf("[CAESAR] source = %s; encoded = %s (%s; %d); decoded = %s \n",
+        // example output
+        // source:  Съешь ещё этих мягких французских булочек
+        // encoded: БтЫрфшЫсЬшхйамшдчЩвамшлзХенкЯивамшЦкгёпЫв (key: КЛЮЧЕВОЕ СЛоВО; offset: 3)
+        // decoded: Съешь ещё этих мягких французских булочек
+        System.out.printf("[CAESAR]\nsource = %s\nencoded = %s (key: %s; offset: %d)\ndecoded = %s \n[/CAESAR]\n",
                 String.valueOf(Source),
                 String.valueOf(encoded),
                 String.valueOf(Key),
