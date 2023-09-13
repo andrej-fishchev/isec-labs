@@ -18,27 +18,23 @@ public class Caesar {
 
         public char[] encode(char[] value, char[] secret, int offset) {
 
-            if(alphabet.length < secret.length || offset < 0 || offset >= alphabet.length)
+            if(alphabet.length < secret.length)
                 return value;
 
-            int secretEnd = secret.length + offset;
+            // from offset in range (-minInt; +maxInt)
+            // to offset in range [0, alphabet.length)
+            offset = shift(offset, alphabet.length);
 
-            if(secretEnd > alphabet.length)
-                return value;
-
-            char[] secretRow = makeSecretRow(alphabet, secret, offset);
+            char[] secretRow = makeSecret(alphabet, secret, offset);
 
             StringBuilder output = new StringBuilder();
 
             for(int i = 0, pos; i < value.length; i++)
-            {
-                if((pos = Caesar.indexOf(alphabet, value[i])) == -1) {
-                    output.append(value[i]);
-                    continue;
-                }
-
-                output.append(secretRow[(pos + alphabet.length - offset) % alphabet.length]);
-            }
+                output.append(
+                        ((pos = indexOf(alphabet, value[i])) == -1)
+                            ? value[i]                          // unknown character
+                            : secretRow[pos]                    // encoded character (using encoded alphabet)
+                );
 
             return output.toString().toCharArray();
         }
@@ -64,53 +60,50 @@ public class Caesar {
 
         public char[] decode(char[] value, char[] secret, int offset) {
 
-            if(alphabet.length < secret.length || offset < 0 || offset >= alphabet.length)
+            if(alphabet.length < secret.length)
                 return value;
 
-            int secretEnd = secret.length + offset;
+            offset = shift(offset, alphabet.length);
 
-            if(secretEnd > alphabet.length)
-                return value;
-
-            char[] secretRow = makeSecretRow(alphabet, secret, offset);
+            char[] secretRow = makeSecret(alphabet, secret, offset);
 
             StringBuilder output = new StringBuilder();
 
             for(int i = 0, pos; i < value.length; i++)
-            {
-                if((pos = Caesar.indexOf(secretRow, value[i])) == -1) {
-                    output.append(value[i]);
-                    continue;
-                }
-
-                output.append(alphabet[(pos + offset) % alphabet.length]);
-            }
+                output.append(
+                        ((pos = indexOf(secretRow, value[i])) == -1)
+                                ? value[i]                          // unknown character
+                                : alphabet[pos]                     // decoded character (using alphabet)
+                );
 
             return output.toString().toCharArray();
         }
     }
 
-    private static char[] makeSecretRow(char[] alpha, char[] secret, int offset) {
+    private static char[] makeSecret(char[] alpha, char[] secret, int offset) {
 
         char[] row = new char[alpha.length];
 
-        System.arraycopy(secret, 0, row, 0, secret.length);
+        for(int i = 0; i < secret.length; i++)
+            row[shift(i + offset, alpha.length)] = secret[i];
 
-        for(int i = 0, j = 0, x; i < alpha.length; i++) {
-
-            x = secret.length + j;
-
-            if(x >= alpha.length)
-                break;
-
-            if(indexOf(row, alpha[i]) != -1)
+        for(int i = 0,
+            j = 0,
+            offsetEnd = shift(offset + secret.length, alpha.length);
+            j < alpha.length && i < alpha.length - secret.length; j++)
+        {
+            if(indexOf(row, alpha[j]) != -1)
                 continue;
 
-            row[x] = alpha[i];
-            j++;
+            row[shift(offsetEnd + i, alpha.length)] = alpha[j];
+            i++;
         }
 
         return row;
+    }
+
+    private static int shift(int offset, int maxl) {
+        return ((offset % maxl) + maxl) % maxl;
     }
 }
 
