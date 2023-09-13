@@ -31,12 +31,13 @@ public class Main {
         // source:  Съешь ещё этих мягких французских булочек
         // encoded: БтЫрфшЫсЬшхйамшдчЩвамшлзХенкЯивамшЦкгёпЫв (key: КЛЮЧЕВОЕ СЛоВО; offset: 3)
         // decoded: Съешь ещё этих мягких французских булочек
-        System.out.printf("[CAESAR]\nsource = %s\nencoded = %s (key: %s; offset: %d)\ndecoded = %s \n[/CAESAR]\n",
+        System.out.printf("[CAESAR]\nsource  = %s\nencoded = %s (key: %s; offset: %d)\ndecoded = %s \nequal: %b\n[/CAESAR]\n",
                 String.valueOf(Source),
                 String.valueOf(encoded),
                 String.valueOf(Key),
                 Offset,
-                String.valueOf(decoded)
+                String.valueOf(decoded),
+                String.valueOf(Source).equals(String.valueOf(decoded))
         );
     }
 }

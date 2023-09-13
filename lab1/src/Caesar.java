@@ -25,7 +25,7 @@ public class Caesar {
             // to offset in range [0, alphabet.length)
             offset = shift(offset, alphabet.length);
 
-            char[] secretRow = makeSecret(alphabet, secret, offset);
+            char[] encodedAlphabet = makeEncodedAlphabet(alphabet, secret, offset);
 
             StringBuilder output = new StringBuilder();
 
@@ -33,7 +33,7 @@ public class Caesar {
                 output.append(
                         ((pos = indexOf(alphabet, value[i])) == -1)
                             ? value[i]                          // unknown character
-                            : secretRow[pos]                    // encoded character (using encoded alphabet)
+                            : encodedAlphabet[pos]              // encoded character (using encoded alphabet)
                 );
 
             return output.toString().toCharArray();
@@ -65,13 +65,13 @@ public class Caesar {
 
             offset = shift(offset, alphabet.length);
 
-            char[] secretRow = makeSecret(alphabet, secret, offset);
+            char[] encodedAlphabet = makeEncodedAlphabet(alphabet, secret, offset);
 
             StringBuilder output = new StringBuilder();
 
             for(int i = 0, pos; i < value.length; i++)
                 output.append(
-                        ((pos = indexOf(secretRow, value[i])) == -1)
+                        ((pos = indexOf(encodedAlphabet, value[i])) == -1)
                                 ? value[i]                          // unknown character
                                 : alphabet[pos]                     // decoded character (using alphabet)
                 );
@@ -80,7 +80,7 @@ public class Caesar {
         }
     }
 
-    private static char[] makeSecret(char[] alpha, char[] secret, int offset) {
+    private static char[] makeEncodedAlphabet(char[] alpha, char[] secret, int offset) {
 
         char[] row = new char[alpha.length];
 
