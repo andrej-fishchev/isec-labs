@@ -5,8 +5,6 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
-import java.util.Optional;
-import java.util.Random;
 
 // var 11
 public class Main {
@@ -17,7 +15,7 @@ public class Main {
 
     public static final RSA.Encoder EncoderInstance = RSA.getEncoder();
 
-    public static final RSAKeyPairGenerator.RSAKeyPair Keys = genKeys(KeyBitLength);
+    public static final RSA.KeyPair Keys = RSA.getKeys(KeyBitLength, 1, new SecureRandom());
 
     public static final String ToFilePath = "/data/some.txt";
 
@@ -99,15 +97,5 @@ public class Main {
                 new String(decoded, StandardCharsets.UTF_8));
 
         return decoded;
-    }
-
-    public static RSAKeyPairGenerator.RSAKeyPair genKeys(int keyBitLength) {
-        Optional<RSAKeyPairGenerator.RSAKeyPair> buffer;
-        Random rnd = new SecureRandom();
-
-        do buffer = RSA.getRSAKeyPair(keyBitLength, 1, rnd);
-        while(buffer.isEmpty());
-
-        return buffer.get();
     }
 }

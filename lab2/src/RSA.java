@@ -1,6 +1,8 @@
 import java.math.BigInteger;
+import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Optional;
 import java.util.Random;
 
@@ -8,13 +10,80 @@ public class RSA {
 
     private RSA() {}
 
-    public static Optional<RSAKeyPairGenerator.RSAKeyPair> getRSAKeyPair(int bitL, int certainty, Random rnd) {
-        return RSAKeyPairGenerator.generate(bitL/2, certainty, rnd);
-    }
+    public static RSA.KeyPair getKeys(int bitLen, int certainty, Random rnd) { return KeysGenerator.generate(bitLen, certainty, rnd); }
 
     public static Encoder getEncoder() { return new Encoder(); }
 
     public static Decoder getDecoder() { return new Decoder(); }
+
+    public static final class KeyPair implements RSAKey {
+
+        private final CustomRSAPublicKey publicKey;
+
+        private final CustomRSAPrivateKey privateKey;
+
+        private KeyPair(CustomRSAPublicKey pubKey, CustomRSAPrivateKey priKey) {
+            publicKey = pubKey;
+            privateKey = priKey;
+        }
+
+        public CustomRSAPublicKey getPublicKey() { return publicKey; }
+
+        public CustomRSAPrivateKey getPrivateKey() { return privateKey; }
+
+        @Override
+        public BigInteger getModulus() {
+            return publicKey.getModulus();
+        }
+
+        @Override
+        public AlgorithmParameterSpec getParams() {
+            return RSAKey.super.getParams();
+        }
+    }
+
+    public static class KeysGenerator {
+
+        private KeysGenerator() {}
+
+        public static Optional<RSA.KeyPair> tryGenerate(int bitLen, int certainty, Random rnd) {
+
+            bitLen /= 2;
+
+            try {
+                BigInteger p = new BigInteger(bitLen, certainty, rnd);
+                BigInteger q = new BigInteger(bitLen, certainty, rnd);
+
+                BigInteger n = p.multiply(q);
+
+                BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+
+                BigInteger e;
+
+                do    e = BigInteger.probablePrime(phi.bitLength(), rnd);
+                while(e.compareTo(n) > 0 || !e.gcd(phi).equals(BigInteger.ONE));
+
+                BigInteger d = e.modInverse(phi);
+
+                if(!BigInteger.TEN.modPow(e.multiply(d), n).equals(BigInteger.TEN))
+                    throw new ArithmeticException();
+
+                return Optional.of(new RSA.KeyPair(new CustomRSAPublicKey(e, n), new CustomRSAPrivateKey(d, n)));
+            }
+            catch (Exception ignored) {}
+
+            return Optional.empty();
+        }
+
+        public static RSA.KeyPair generate(int bitLen, int certainty, Random rnd) {
+            Optional<RSA.KeyPair> pair;
+
+            do pair = tryGenerate(bitLen, certainty, rnd);
+            while(pair.isEmpty());
+
+            return pair.get();
+        }
+    }
 
     public static class Encoder {
 
