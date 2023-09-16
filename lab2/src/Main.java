@@ -79,7 +79,7 @@ public class Main {
 
         byte[] encoded = encoder.encode(value, key);
 
-        System.out.printf("Source: %s; \nSourceInBytes: %s (total: %d) \nEncodedInBytes: %s (total: %d); \nEncoded: %s\n\n",
+        System.out.printf("Source: %s \nSourceInBytes: %s (total: %d) \nEncodedInBytes: %s (total: %d); \nEncoded: %s\n\n",
                 new String(value, StandardCharsets.UTF_8),
                 Arrays.toString(value), value.length,
                 Arrays.toString(encoded), encoded.length,
@@ -92,7 +92,7 @@ public class Main {
 
         byte[] decoded = decoder.decode(value, key);
 
-        System.out.printf("Source: %s; \nSourceInBytes: %s (total: %d) \nDecodedInBytes: %s (total: %d); \nDecoded: %s\n\n",
+        System.out.printf("Source: %s \nSourceInBytes: %s (total: %d) \nDecodedInBytes: %s (total: %d); \nDecoded: %s\n\n",
                 new String(value, StandardCharsets.UTF_8),
                 Arrays.toString(value), value.length,
                 Arrays.toString(decoded), decoded.length,
