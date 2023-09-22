@@ -43,7 +43,7 @@ public class Elgamal {
 
             // (y^r * r^s) mod p == g^m mod p
             // -->
-            // (y^r mod p) * (r^s mod p) == g^m mod p
+            // ((y^r mod p) * (r^s mod p)) mod p == g^m mod p
             return publicKey.getKey().modPow(elgamalSignedMessage.getR(), publicKey.getP())
                     .multiply(elgamalSignedMessage.getR().modPow(elgamalSignedMessage.getS(), publicKey.getP())).mod(publicKey.getP())
                     .compareTo(publicKey.getG().modPow(hashcode, publicKey.getP())) == 0;
