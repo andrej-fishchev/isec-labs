@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 // var 17
 public class Main {
-    public static final int KeyBitLength = 64;
+    public static final int KeyBitLength = 2048;
 
     public static final CryptoGamma.Decoder DecoderInstance = CryptoGamma.getDecoder();
 
@@ -19,22 +19,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-        byte[] decoded = new byte[0];
 
-        int iBlockInBytes = getBlockSizeInBytes(KeyBitLength);
 
         try(FileInputStream inputStream = new FileInputStream(getAbsolutePathToFile())) {
 
-            int iBytes;
-            int iOffset = 0;
+            int iBlockInBytes = getBlockSizeInBytes(KeyBitLength);
+
 
             byte[] encoded;
-            byte[] buffer = new byte[iBlockInBytes];
+            byte[] decoded  = new byte[0];
+            byte[] buffer   = new byte[iBlockInBytes];
 
-            while((iBytes = inputStream.readNBytes(buffer, iOffset, Math.min(iBlockInBytes, inputStream.available()))) > 0) {
-
-                if(iBytes != iBlockInBytes)
-                    buffer = Arrays.copyOf(buffer, iBlockInBytes);
+            while((inputStream.readNBytes(buffer, 0, Math.min(iBlockInBytes, inputStream.available()))) > 0) {
 
                 encoded = encode(buffer, EncoderInstance, Key);
 
@@ -43,11 +39,9 @@ public class Main {
                 buffer = new byte[iBlockInBytes];
             }
 
-            System.out.println();
+            System.out.println("Decoded: \n" + new String(decoded, StandardCharsets.UTF_8).replaceAll("\\x00", ""));
 
-        } catch (IOException ignored) {        }
-
-        System.out.println("Decoded: \n" + new String(decoded, StandardCharsets.UTF_8).replaceAll("\\x00", ""));
+        } catch (IOException ignored) { }
     }
 
     static byte[] copyWithResizeCustom(byte[] source, byte[] value) {
