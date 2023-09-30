@@ -14,7 +14,8 @@ public class Main {
     // bytes
     public static final int MessageLength = 256;
 
-    public static final IElgamalHashFunc HashFuncInstance = new SimpleMessageHasher();
+    public static final IElgamalHashFunc HashFuncInstance = (message, publicKey) ->
+            new BigInteger(message).mod(publicKey.getP().subtract(BigInteger.ONE)).abs();
 
     public static final String ToFilePath = "/data/some.txt";
 
