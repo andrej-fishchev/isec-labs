@@ -3,13 +3,16 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 
 // var 27
 public class Main {
 
-    public static final int MessageBitLength = 256;
+    // bits
+    public static final int KeyBitLength = 256;
+
+    // bytes
+    public static final int MessageLength = 256;
 
     public static final IElgamalHashFunc HashFuncInstance = new SimpleMessageHasher();
 
@@ -17,46 +20,29 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int iBlockInBytes = getBlockSizeInBytes(MessageBitLength);
-
         try(FileInputStream inputStream = new FileInputStream(getAbsolutePathToFile())) {
 
-            ElgamalPublicKey publicKey;
             ElgamalPrivateKey privateKey;
             Elgamal.Signature signerInstance;
 
-            int iBytes;
-            int iOffset = 0;
+            byte[] buffer = new byte[MessageLength];
 
-            byte[] buffer = new byte[iBlockInBytes];
+            while((inputStream.readNBytes(buffer, 0, Math.min(MessageLength, inputStream.available()))) > 0) {
 
-            while((iBytes = inputStream.readNBytes(buffer, iOffset, Math.min(iBlockInBytes, inputStream.available()))) > 0) {
+                privateKey = new ElgamalPrivateKey(Elgamal.getKey(KeyBitLength, new SecureRandom()));
 
-                if(iBytes != iBlockInBytes)
-                    buffer = Arrays.copyOf(buffer, iBlockInBytes);
-
-                privateKey = new ElgamalPrivateKey(Elgamal.getKey(MessageBitLength, new SecureRandom()));
-
-                publicKey = getPublicKey(privateKey);
-
-                signerInstance = Elgamal.getSignature(publicKey, HashFuncInstance);
+                signerInstance = Elgamal.getSignature(getPublicKey(privateKey), HashFuncInstance);
 
                 verify(sign(buffer, signerInstance, privateKey), signerInstance);
 
-                buffer = new byte[iBlockInBytes];
+                buffer = new byte[MessageLength];
             }
 
-            System.out.println();
-
-        } catch (IOException ignored) {        }
+        } catch (IOException ignored) {}
     }
 
     static String getAbsolutePathToFile() {
         return System.getProperty("user.dir") +  ToFilePath;
-    }
-
-    static int getBlockSizeInBytes(int bits) {
-        return bits / Byte.SIZE;
     }
 
     public static ElgamalSignedMessage sign(byte[] value, Elgamal.Signature signer, ElgamalPrivateKey key) {

@@ -29,6 +29,6 @@ public class ElgamalSignedMessage {
 
     @Override
     public String toString() {
-        return String.format("%s [%s; %s]", new String(getMessage(), StandardCharsets.UTF_8), getR(), getS());
+        return String.format("%s (%s, %s)", new String(getMessage(), StandardCharsets.UTF_8), getR(), getS());
     }
 }
