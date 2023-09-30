@@ -2,14 +2,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 // var 11
 public class Main {
 
-    public static final int KeyBitLength = 512;
+    public static final int KeyBitLength = 4096;
 
     public static final RSA.Decoder DecoderInstance = RSA.getDecoder();
 
@@ -21,22 +19,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-        byte[] decoded = new byte[0];
-
-        int iBlockInBytes = getBlockSizeInBytes(Keys.getModulus().bitLength());
-
         try(FileInputStream inputStream = new FileInputStream(getAbsolutePathToFile())) {
 
-            int iBytes;
-            int iOffset = 0;
+            int iBlockInBytes = getBlockSizeInBytes(Keys.getModulus().bitLength());
 
             byte[] encoded;
-            byte[] buffer = new byte[iBlockInBytes];
+            byte[] decoded  =   new byte[0];
+            byte[] buffer   =   new byte[iBlockInBytes];
 
-            while((iBytes = inputStream.readNBytes(buffer, iOffset, Math.min(iBlockInBytes, inputStream.available()))) > 0) {
-
-                if(iBytes != iBlockInBytes)
-                    buffer = Arrays.copyOf(buffer, iBlockInBytes);
+            while((inputStream.readNBytes(buffer, 0, Math.min(iBlockInBytes, inputStream.available()))) > 0) {
 
                 encoded = encode(buffer, EncoderInstance, Keys.getPublicKey());
 
@@ -45,11 +36,9 @@ public class Main {
                 buffer = new byte[iBlockInBytes];
             }
 
-            System.out.println();
+            System.out.println("Decoded: \n" + new String(decoded, StandardCharsets.UTF_8).replaceAll("\\x00", ""));
 
-        } catch (IOException ignored) {        }
-
-        System.out.println("Decoded: \n" + new String(decoded, StandardCharsets.UTF_8).replaceAll("\\x00", ""));
+        } catch (IOException ignored) {}
     }
 
     static byte[] copyWithResizeCustom(byte[] source, byte[] value) {
@@ -69,11 +58,7 @@ public class Main {
         return realKeyBits / Byte.SIZE;
     }
 
-    static int getTotalBlocks(byte[] buffer, int blockSize) {
-        return buffer.length / blockSize + 1;
-    }
-
-    public static byte[] encode(byte[] value, RSA.Encoder encoder, RSAPublicKey key) {
+    public static byte[] encode(byte[] value, RSA.Encoder encoder, CRSAPublicKey key) {
 
         byte[] encoded = encoder.encode(value, key);
 
@@ -86,7 +71,7 @@ public class Main {
         return encoded;
     }
 
-    public static byte[] decode(byte[] value, RSA.Decoder decoder, RSAPrivateKey key) {
+    public static byte[] decode(byte[] value, RSA.Decoder decoder, CRSAPrivateKey key) {
 
         byte[] decoded = decoder.decode(value, key);
 

@@ -1,15 +1,14 @@
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.interfaces.RSAPublicKey;
 
-public class CustomRSAPublicKey implements RSAPublicKey {
+public class CRSAPublicKey implements RSAPublicKey {
 
-    private final String algo = "RSA";
+    private final BigInteger expo;
 
-    private BigInteger expo;
+    private final BigInteger mod;
 
-    private BigInteger mod;
-
-    public CustomRSAPublicKey(BigInteger exponent, BigInteger modulus) {
+    public CRSAPublicKey(BigInteger exponent, BigInteger modulus) {
         expo = exponent;
         mod  = modulus;
     }
@@ -20,18 +19,16 @@ public class CustomRSAPublicKey implements RSAPublicKey {
     }
 
     @Override
-    public String getAlgorithm() {
-        return algo;
-    }
+    public String getAlgorithm() { return "RSA"; }
 
     @Override
     public String getFormat() {
-        return null;
+        return "%s.%s";
     }
 
     @Override
     public byte[] getEncoded() {
-        return null;
+        return String.format(getFormat(), getPublicExponent(), getModulus()).getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

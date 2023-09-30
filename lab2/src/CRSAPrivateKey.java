@@ -1,15 +1,13 @@
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.interfaces.RSAPrivateKey;
 
-public class CustomRSAPrivateKey implements RSAPrivateKey {
+public class CRSAPrivateKey implements RSAPrivateKey {
+    private final BigInteger expo;
 
-    private final String algo = "RSA";
+    private final BigInteger mod;
 
-    private BigInteger expo;
-
-    private BigInteger mod;
-
-    public CustomRSAPrivateKey(BigInteger exponent, BigInteger modulus) {
+    public CRSAPrivateKey(BigInteger exponent, BigInteger modulus) {
         expo = exponent;
         mod  = modulus;
     }
@@ -20,18 +18,16 @@ public class CustomRSAPrivateKey implements RSAPrivateKey {
     }
 
     @Override
-    public String getAlgorithm() {
-        return algo;
-    }
+    public String getAlgorithm() { return "RSA"; }
 
     @Override
     public String getFormat() {
-        return null;
+        return "%s.%s";
     }
 
     @Override
     public byte[] getEncoded() {
-        return null;
+        return String.format(getFormat(), getPrivateExponent(), getModulus()).getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

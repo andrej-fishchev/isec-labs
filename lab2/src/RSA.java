@@ -1,7 +1,5 @@
 import java.math.BigInteger;
 import java.security.interfaces.RSAKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Optional;
 import java.util.Random;
@@ -10,7 +8,8 @@ public class RSA {
 
     private RSA() {}
 
-    public static RSA.KeyPair getKeys(int bitLen, int certainty, Random rnd) { return KeysGenerator.generate(bitLen, certainty, rnd); }
+    public static RSA.KeyPair getKeys(int bitLen, int certainty, Random rnd)
+        { return KeysGenerator.generate(bitLen, certainty, rnd); }
 
     public static Encoder getEncoder() { return new Encoder(); }
 
@@ -18,18 +17,18 @@ public class RSA {
 
     public static final class KeyPair implements RSAKey {
 
-        private final CustomRSAPublicKey publicKey;
+        private final CRSAPublicKey publicKey;
 
-        private final CustomRSAPrivateKey privateKey;
+        private final CRSAPrivateKey privateKey;
 
-        private KeyPair(CustomRSAPublicKey pubKey, CustomRSAPrivateKey priKey) {
+        private KeyPair(CRSAPublicKey pubKey, CRSAPrivateKey priKey) {
             publicKey = pubKey;
             privateKey = priKey;
         }
 
-        public CustomRSAPublicKey getPublicKey() { return publicKey; }
+        public CRSAPublicKey getPublicKey() { return publicKey; }
 
-        public CustomRSAPrivateKey getPrivateKey() { return privateKey; }
+        public CRSAPrivateKey getPrivateKey() { return privateKey; }
 
         @Override
         public BigInteger getModulus() {
@@ -68,7 +67,7 @@ public class RSA {
                 if(!BigInteger.TEN.modPow(e.multiply(d), n).equals(BigInteger.TEN))
                     throw new ArithmeticException();
 
-                return Optional.of(new RSA.KeyPair(new CustomRSAPublicKey(e, n), new CustomRSAPrivateKey(d, n)));
+                return Optional.of(new RSA.KeyPair(new CRSAPublicKey(e, n), new CRSAPrivateKey(d, n)));
             }
             catch (Exception ignored) {}
 
@@ -89,7 +88,7 @@ public class RSA {
 
         private Encoder() {}
 
-        public byte[] encode(byte[] value, RSAPublicKey key) {
+        public byte[] encode(byte[] value, CRSAPublicKey key) {
 
             if(value.length == 0)
                 return value;
@@ -107,7 +106,7 @@ public class RSA {
 
         private Decoder() {}
 
-        public byte[] decode(byte[] value, RSAPrivateKey key) {
+        public byte[] decode(byte[] value, CRSAPrivateKey key) {
 
             if(value.length == 0)
                 return value;
