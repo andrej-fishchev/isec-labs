@@ -32,7 +32,8 @@ public class Elgamal {
 
             BigInteger r = publicKey.getG().modPow(k, publicKey.getP());
 
-            BigInteger s = hashcode.subtract(pri.getKey().multiply(r)).multiply(k.modInverse(sub));
+            BigInteger s = hashcode.subtract(pri.getKey().multiply(r)).multiply(k.modInverse(sub))
+                    .mod(sub);
 
             return new ElgamalSignedMessage(message, r, s);
         }
